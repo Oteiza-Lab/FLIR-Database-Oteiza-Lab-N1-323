@@ -48,7 +48,7 @@ def main(args=None):
 
         cur = conn.cursor()
 
-        # Initialize camera
+        # Initialize cameraö
         system = PySpin.System.GetInstance()
         cam_list = system.GetCameras()
         camera = cam_list.GetByIndex(0)
@@ -242,3 +242,4 @@ def main(args=None):
 
 if __name__ == "__main__":
     main()
+    
