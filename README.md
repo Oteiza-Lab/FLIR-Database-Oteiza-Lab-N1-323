@@ -141,10 +141,10 @@ Steps to FIX:
 - Close SpinView.
 - Run reset.py
 
-    PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 reset.py
-    Initializing FLIR camera system...
-    Resetting FLIR camera to factory defaults...
-    FLIR camera reset completed successfully.
+	    PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 reset.py
+	    Initializing FLIR camera system...
+	    Resetting FLIR camera to factory defaults...
+	    FLIR camera reset completed successfully.
 
 ### 2 FPS Issue
 - Currently, the hardware setup is incapable of performing at a high FPS.
@@ -152,8 +152,7 @@ Steps to FIX:
 - This issue stems from either an SD Card not being used or other hardware components being out of date.
 - Once the hardware is upgraded, follow these steps to ensure the FPS has been improved.
 
-1 Run Commands:
-- Run Configure.py, Run Transferratehigh.py, Run Configure.py, Run Transferratelow.py:
+1 Run Commands: Run Configure.py, Run Transferratehigh.py, Run Configure.py, Run Transferratelow.py:
 
 	PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 configure.py
 	Camera configured for maximum frame rate.
@@ -173,8 +172,13 @@ Steps to FIX:
 - Hence, we have to downgrade our python interpreter as well as some other components.
 
 How to FIX (This is what worked for n1-323):
+
 1 Install Python 3.10 from https://www.python.org
+
 2 CTRL + SHIFT + P --> Python: Select Interpreter --> Python 3.10.11
+
 3 pip install numpy<2
+
 4 pip uninstall PySpin
+
 5 pip install PySpin
