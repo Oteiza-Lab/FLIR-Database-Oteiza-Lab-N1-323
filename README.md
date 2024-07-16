@@ -20,6 +20,8 @@ The camera (FLIR Blackfly S BFS-U3-16S2M) is connected to the computer via USB 3
 
 The camera is operated in python through the Spinnaker SDK and PostGre SQL. For more information on both of these, visit https://www.flir.com/products/spinnaker-sdk/?vertical=machine+vision&segment=iis and https://www.postgresql.org/download/ respectively. The camera can be configured and viewed through the application SpinView.
 
+Before running, you will have to configure your python interpreter to 3.10 and install all the imported features in the script.
+
 ---------------------------------------------
 
 ## STEPS TO RUN FLIR DATABASE PROPERLY
@@ -39,6 +41,7 @@ The camera is operated in python through the Spinnaker SDK and PostGre SQL. For 
 3 Open VSCode.
 - Open FLIR_Database_OteizaLab folder.
 - If necessary, navigate to proper directory: PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> (your user in place of mine).
+
       PS C:\Users\daniel.durst\Downloads\Actuator_OteizaLab> cd /
       PS C:\> cd Users
       PS C:\Users> cd daniel.durst
@@ -47,11 +50,13 @@ The camera is operated in python through the Spinnaker SDK and PostGre SQL. For 
 
 4 Run Commands.
 - Running the file alone:
+
       PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 dataabse.py
       ___ (follow prompts)
       ___ (output, connect to database, getimages)
 
 - Running the file with parameters and flags [-ti DURATION] [-fps FPS] [-ex] [-et EXPOSURE_TIME] [-wi WIDTH] [-he HEIGHT] [-lens LENS]:
+
       PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 database.py -ti 30 -fps 30 -ex -wi 1440 -he 1080 -lens FixedFocal35mm
       ___ (output, connect to database, getimages)
       **IMPORTANT NOTE**
@@ -67,7 +72,6 @@ The camera is operated in python through the Spinnaker SDK and PostGre SQL. For 
 - Hold down CTRL + C:
 - You will still be able to open the video that was being taken with the prompt, however this file is NOT saved to the database.
 
-  
 ---------------------------------------------
 
 ---------------------------------------------
@@ -76,27 +80,33 @@ The camera is operated in python through the Spinnaker SDK and PostGre SQL. For 
 All attributes that are added must also have a variable in the script that is returned and sent to the database with the cursor SQL command.
 
 1 Adding a stored attribute to the table:
+
   ALTER TABLE videos
   ADD COLUMN fish VARCHAR(255);
 
 2 Deleting a stored attribute from the table (WILL DELETE ALL ENTRIES OF THAT COLUMN):
+
   ALTER TABLE videos
   DROP COLUMN fish;
 
 3 Adding a new table to the database:
+
   CREATE TABLE fish (
 	name VARCHAR(255) PRIMARY KEY,
 	color VARCHAR(255) NOT NULL
 );
 
 4 Deleting a table from the database (WILL DELETE ALL DATA STORED IN THE TABLE):
+
   DROP TABLE fish;
 
 5 Deleting a data instance (video with its data) from a table (target Primary Key):
+
   DELETE FROM videos
   WHERE id = 38;
 
 6 Deleting all data instances in a table:
+
   DELETE FROM videos;
 
 ---------------------------------------------
@@ -106,6 +116,7 @@ All attributes that are added must also have a variable in the script that is re
 ## ISSUE FIXES
 
 ### 1 Running Script, Camera Functioning Properly, Width Error
+
     PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 test.py -ti 30 -fps 30 -ex -wi 1440 -he 1080 -lens 30x
     Successfully connected to PostgreSQL server!
     -----------------------------------------------------
@@ -129,9 +140,41 @@ All attributes that are added must also have a variable in the script that is re
 Steps to FIX:
 - Close SpinView.
 - Run reset.py
+
     PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 reset.py
     Initializing FLIR camera system...
     Resetting FLIR camera to factory defaults...
     FLIR camera reset completed successfully.
 
 ### 2 FPS Issue
+- Currently, the hardware setup is incapable of performing at a high FPS.
+- The FLIR camera promises up to 30 FPS, but the read/write speed of the computer/camera configuration only allows for up to ~2.5 FPS.
+- This issue stems from either an SD Card not being used or other hardware components being out of date.
+- Once the hardware is upgraded, follow these steps to ensure the FPS has been improved.
+
+1 Run Commands:
+- Run Configure.py, Run Transferratehigh.py, Run Configure.py, Run Transferratelow.py:
+
+	PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 configure.py
+	Camera configured for maximum frame rate.
+	PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 transferratehigh.py
+	Captured 23 frames in 10.46 seconds at higher resolution.
+	Data transfer rate: 3.26 MB/s
+	PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 configure.py       
+	Camera configured for maximum frame rate.
+	PS C:\Users\daniel.durst\Downloads\FLIR_Database_OteizaLab> python3.10 transferratelow.py
+	Captured 31 frames in 10.66 seconds at lower resolution.
+	Data transfer rate: 0.85 MB/s
+
+- This way, you will be able to tell the current FPS and DTR at low and high resolutions.
+
+### 3 PySpin cannot be Resolved by PyLance
+- This will occur if you are using Python 11>. This is because Spinnaker SDK only has a 3.10 python version out right now.
+- Hence, we have to downgrade our python interpreter as well as some other components.
+
+How to FIX (This is what worked for n1-323):
+1 Install Python 3.10 from https://www.python.org
+2 CTRL + SHIFT + P --> Python: Select Interpreter --> Python 3.10.11
+3 pip install numpy<2
+4 pip uninstall PySpin
+5 pip install PySpin
